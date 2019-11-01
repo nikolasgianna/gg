@@ -1,9 +1,7 @@
 print("hello")
 
 def toBoard(cells):
-
     board = set([])
-
     for x,row in enumerate(cells):
         for y,cell in enumerate(row):
             if cell:
