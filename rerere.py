@@ -1,5 +1,3 @@
-print("hello")
-
 def toBoard(cells):
     board = set([])
     for x,row in enumerate(cells):
