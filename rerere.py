@@ -1,5 +1,9 @@
+print("hello")
+
 def toBoard(cells):
+
     board = set([])
+
     for x,row in enumerate(cells):
         for y,cell in enumerate(row):
             if cell:
@@ -8,11 +12,20 @@ def toBoard(cells):
                 #  print (board)
     return board
 
-start = [[0,1,0],
-         [0,0,1],
-         [1,1,1]]
+def htmlize(array):
+    s = []
+    for x,row in enumerate(array):
+        for y,cell in enumerate(row):
+            s.append('▓▓' if cell else '░░')
+        s.append('\n')
+    return ''.join(s)
 
-print (toBoard(start))
+start = [[1,1,1],
+         [0,1,0],
+         [0,1,0]]
+
+print (htmlize(start))
+# print (toBoard(start))
 
 board = toBoard(start)
 
@@ -38,21 +51,21 @@ def apply_iteration(board):
 
 # if __name__ == "__main__":
 def run(board):
-    number_of_iterations = 1
+    number_of_iterations = 16
     for _ in range(number_of_iterations):
         board = apply_iteration(board)
     # print(board)
     return board
 
 der = list(run(board))
-print (der)
+# print (der)
 
 new_height = max( x for (x,y) in der) - min( x for (x,y) in der)
 new_width =  max( y for (x,y) in der) - min( y for (x,y) in der)
 
 offset_x = 0 - min( x for (x,y) in der)
 offset_y = 0 - min( y for (x,y) in der)
-print (new_height, new_width)
+# print (new_height, new_width)
 
 def toArray(der, height, width, offset_x, offset_y):
 
@@ -65,8 +78,11 @@ def toArray(der, height, width, offset_x, offset_y):
 
     return board
 
-print (toArray(der, new_height+1, new_width+1, offset_x,offset_y))
+
+out = toArray(der, new_height+1, new_width+1, offset_x,offset_y)
+# print (out)
 new_der = [(z+offset_x, y+offset_y) for (z,y) in der]
 
-print (der)
-print (new_der)
+# print (der)
+# print (new_der)
+print (htmlize(out))
