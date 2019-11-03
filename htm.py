@@ -24,10 +24,10 @@ def toArray(board):
         for cell in new_world:
             board[cell[0]][cell[1]] = 1
     except ValueError:
-        print ("No living cells!!!")
+        print ("No living cells left!!!")
         exit()
     except UnboundLocalError:
-        print ("No living cells!!!")
+        print ("No living cells left!!!")
         exit()
 
     return board
@@ -53,12 +53,12 @@ def main():
 
     if len(sys.argv) > 1:
         fo = open(sys.argv[1])
-        seed = fo.read()
+        inp = fo.read()
     else:
-        seed = ''
-
+        inp = ''
+    # fo = open("/Users/nikolasgiannakis/Desktop/input.txt")
     cells = set([])
-    for y, row in enumerate(seed.splitlines()):
+    for y, row in enumerate(inp.splitlines()):
         for x, cell in enumerate(row.strip()):
             if cell == '0':
                 cells.add((y,x))

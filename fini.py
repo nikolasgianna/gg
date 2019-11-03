@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 def neighbors(cell):
     x, y = cell
     block = [(x + i, y + j) for i in range(-1, 2) for j in range(-1, 2)]
@@ -51,7 +54,7 @@ def tick(board):
 
 def main():
 
-    fo = open("/Users/nikolasgiannakis/Desktop/input.txt")
+    fo = open("./input.txt")
     inp = fo.read()
     print (inp)
     start = set([])

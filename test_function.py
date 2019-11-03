@@ -17,4 +17,4 @@ class TestSum(unittest.TestCase):
         self.assertEqual(result, out, "Should be 6")
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(argv=input)
