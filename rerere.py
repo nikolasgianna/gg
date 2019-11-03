@@ -97,6 +97,8 @@ def htmlize(array):
     for x,row in enumerate(array):
         for y,cell in enumerate(row):
             s.append('▓▓' if cell else '░░')
+            # s.append('🀫' if cell else '🂱')
+
         s.append('\n')
     return ''.join(s)
 
