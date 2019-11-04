@@ -2,6 +2,8 @@
 
 import sys
 
+MAX_ARRAY = 20
+
 def neighbors(cell):
     x, y = cell
     block = [(x + i, y + j) for i in range(-1, 2) for j in range(-1, 2)]
@@ -15,6 +17,8 @@ def toArray(board):
     try:
         new_height = max( x for (x,y) in aliveCells) - min( x for (x,y) in aliveCells)
         new_width =  max( y for (x,y) in aliveCells) - min( y for (x,y) in aliveCells)
+        if new_height > MAX_ARRAY or new_width > MAX_ARRAY: exit()
+
         offset_x = 0 - min( x for (x,y) in aliveCells)
         offset_y = 0 - min( y for (x,y) in aliveCells)
         new_world = [(z+offset_x, y+offset_y) for (z,y) in aliveCells]

@@ -1,20 +1,18 @@
 import unittest
-from rerere import start2
+from qwer import ini
 
 class TestSum(unittest.TestCase):
 
-    def test_sum_tuple(self):
-        start = [[1,1,1],
-                 [0,1,0],
-                 [0,1,0]]
+    def test_glider(self):
 
-        out = [[0,1,0],
-                 [1,1,1]]
+        out = '▓▓░░▓▓\n░░▓▓▓▓\n░░▓▓░░\n'
 
-        number_of_iterations = 1
+        seed = open('./glider.txt').read()
 
-        result = start2(start,number_of_iterations )
-        self.assertEqual(result, out, "Should be 6")
+        number_of_iterations = 101
+
+        result = ini(seed,number_of_iterations )
+        self.assertEqual(result, out, "Not the expected result")
 
 if __name__ == '__main__':
-    unittest.main(argv=input)
+    unittest.main()

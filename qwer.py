@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, argparse
-
-MAX_ARRAY = 100
-MAX_ITERATIONS = 1000
+from htm import *
 
 def neighbors(cell):
     x, y = cell
@@ -11,44 +9,6 @@ def neighbors(cell):
     # We only want the surrounding cells
     del block[4]
     return block
-
-def toArray(board):
-
-    aliveCells = list(board)
-
-    try:
-        new_height = max( x for (x,y) in aliveCells) - min( x for (x,y) in aliveCells)
-        new_width =  max( y for (x,y) in aliveCells) - min( y for (x,y) in aliveCells)
-        offset_x = 0 - min( x for (x,y) in aliveCells)
-        offset_y = 0 - min( y for (x,y) in aliveCells)
-        new_world = [(z+offset_x, y+offset_y) for (z,y) in aliveCells]
-
-        board = [[0] * (new_width + 1) for row in range(new_height+1)]
-
-        for cell in new_world:
-
-            board[cell[0]][cell[1]] = 1
-    except ValueError:
-        print ("No living cells left!!!")
-        sys.exit()
-    except UnboundLocalError:
-        print ("No living cells left!!!")
-        sys.exit()
-
-    if new_height > MAX_ARRAY or new_width > MAX_ARRAY:
-            # print ("Maximum array size exceeded")
-        print ("{} {} {}".format("Maximum array size of", MAX_ARRAY, "exceeded"))
-        sys.exit()
-
-    return board
-
-def arrayToTiles(array):
-    s = []
-    for x,row in enumerate(array):
-        for y,cell in enumerate(row):
-            s.append('▓▓' if cell else '░░')
-        s.append('\n')
-    return ''.join(s)
 
 def tick(board):
 
@@ -81,7 +41,6 @@ def game(seed, iterations):
                 cells.add((y,x))
 
     if cells:
-
         print("Initial seed is: \n\n" + arrayToTiles(toArray(cells)))
 
         if iterations > 0:
@@ -94,15 +53,6 @@ def game(seed, iterations):
                 cells = tick(cells)
                 print (arrayToTiles(toArray(cells)))
     else: return ("No living cells in initial seed\n")
-
-def positive_int(x):
-    x = int(x)
-    if x < 1:
-        raise argparse.ArgumentTypeError("Minimum number of iterations is 1")
-    if x > MAX_ITERATIONS:
-        raise argparse.ArgumentTypeError("{} {}".format("Maximum number of iterations is", MAX_ITERATIONS))
-
-    return x
 
 def main():
 
