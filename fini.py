@@ -58,7 +58,7 @@ def toArray(coords):
 def arrayToTiles(array):
 
     # This function turns an array of 1's and 0's into an array of tiles
-    # The tiles are extended ASCII characters (ASCII codes 176 and 178, low-high density dotted)
+    # The tiles are extended ASCII characters (ASCII codes \xB0 and \xB2, low and high density dotted)
 
     s = []
     for x,row in enumerate(array):
@@ -95,7 +95,10 @@ def tick(coords):
 
 def game(seed, iterations):
 
+    # This is where the whole of the Game is implemented
     cells = set([])
+
+    # seed is the initial seed, taken as input from a file
     for y, row in enumerate(seed.splitlines()):
         for x, cell in enumerate(row.strip()):
             if cell == '0':
@@ -103,6 +106,8 @@ def game(seed, iterations):
 
     if cells:
 
+        # The game can run in two modes, either step by step on every press of Return from the user
+        # or for a number of iterations. The number of iterations is taken as input from the user
         print("Initial seed is: \n\n" + arrayToTiles(toArray(cells)))
 
         if iterations > 0:
@@ -117,6 +122,8 @@ def game(seed, iterations):
     else: return ("No living cells in initial seed\n")
 
 def positive_int(x):
+
+    # This is to limit the number of iterations and in doing so, the time the Game will run
     x = int(x)
     if x < 1:
         raise argparse.ArgumentTypeError("Minimum number of iterations is 1")
@@ -127,29 +134,33 @@ def positive_int(x):
 
 def main():
 
-    parser = argparse.ArgumentParser(allow_abbrev=False, description='A tutorial of argparse!')
-    parser.add_argument("--input",required=False, default='', help="This is the 'i' variable")
-    parser.add_argument("--iter", required=False, default=0, type=positive_int, help="This is the 'a' variable")
+    # Set up the command line arguments
+    parser = argparse.ArgumentParser(allow_abbrev=False, description='The Game of Life')
+    parser.add_argument("-in","--input",required=False, default='', help="The input file. If left empty, the initial seed has no living cells")
+    parser.add_argument("-it","--iter", required=False, default=0, type=positive_int, help="The number of iterations. If left empty, the Game runs step by step")
     args = parser.parse_args()
     input = args.input
     iterations = args.iter
 
-
+    # The user can choose the file to use as initial seed. For the empty seed we can either
+    # use a file or an empty string
     if input != '':
         try:
             fo = open(input)
             seed = fo.read()
         except FileNotFoundError:
-            print('\nNo such file in input directory\n')
+            print('\nNo such file found\n')
             sys.exit()
     else:
         print ("No living cells in initial seed\n")
         sys.exit()
 
+    # This is the entry point to the Game
     print (game(seed,iterations))
 
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
+        # The game can be stopped with ctrl-C
         print('\n\nGame Stopped')
