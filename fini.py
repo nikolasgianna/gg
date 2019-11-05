@@ -6,43 +6,60 @@ MAX_ARRAY = 100
 MAX_ITERATIONS = 1000
 
 def neighbors(cell):
+
+    # This is a function that returns the coordinates of a given cell's neighbour cells
     x, y = cell
     block = [(x + i, y + j) for i in range(-1, 2) for j in range(-1, 2)]
     # We only want the surrounding cells
     del block[4]
     return block
 
-def toArray(board):
+def toArray(coords):
 
-    aliveCells = list(board)
+    # This is a function that takes as input a set of coordinates of living cells
+    # and returns a 2d array (technically a list for python) of zeros and ones,
+    # where ones represent living cells
+    # The array is cropped around the living cells
+
+    aliveCells = list(coords)
 
     try:
-        new_height = max( x for (x,y) in aliveCells) - min( x for (x,y) in aliveCells)
-        new_width =  max( y for (x,y) in aliveCells) - min( y for (x,y) in aliveCells)
-        offset_x = 0 - min( x for (x,y) in aliveCells)
-        offset_y = 0 - min( y for (x,y) in aliveCells)
-        new_world = [(z+offset_x, y+offset_y) for (z,y) in aliveCells]
-
-        board = [[0] * (new_width + 1) for row in range(new_height+1)]
-
-        for cell in new_world:
-
-            board[cell[0]][cell[1]] = 1
+        # We will need these measures to crop around the living cells
+        # This is also a way to check for lack of living cells
+        max_x = max( x for (x,y) in aliveCells)
+        min_x = min( x for (x,y) in aliveCells)
+        max_y = max( y for (x,y) in aliveCells)
+        min_y = min( y for (x,y) in aliveCells)
     except ValueError:
         print ("No living cells left!!!")
         sys.exit()
-    except UnboundLocalError:
-        print ("No living cells left!!!")
-        sys.exit()
 
+    # This is effectively the cropping mechanism. We only care about the living cells
+    new_height = max_x - min_x
+    new_width = max_y - min_y
+
+    # This is a way to control how big the Game can get
     if new_height > MAX_ARRAY or new_width > MAX_ARRAY:
-            # print ("Maximum array size exceeded")
-        print ("{} {} {}".format("Maximum array size of", MAX_ARRAY, "exceeded"))
-        sys.exit()
+            print ("{} {} {}".format("Maximum array size of", MAX_ARRAY, "exceeded"))
+            sys.exit()
 
-    return board
+    #The input coordninates might not start from zero.
+    new_coords = [(z-min_x, y-min_y) for (z,y) in aliveCells]
+
+    # A new array of the above dimensions is created and filled with zeros
+    out_array = [[0] * (new_width + 1) for row in range(new_height+1)]
+
+    # Every spot that contains a living cell is filled with a '1'
+    for cell in new_coords:
+        out_array[cell[0]][cell[1]] = 1
+
+    return out_array
 
 def arrayToTiles(array):
+
+    # This function turns an array of 1's and 0's into an array of tiles
+    # The tiles are extended ASCII characters (ASCII codes 176 and 178, low-high density dotted)
+
     s = []
     for x,row in enumerate(array):
         for y,cell in enumerate(row):
@@ -50,27 +67,31 @@ def arrayToTiles(array):
         s.append('\n')
     return ''.join(s)
 
-def tick(board):
+def tick(coords):
 
-    # This is the heart of the whole Game
-    # Every time this function runs, another generation is applied
+    # This is the heart of the whole Game.
+    # Every time this function runs, another generation is applied.
+    # A sparse representation was adopted, so the input is a set of
+    # all the living cells' coordinates.
 
-    new_board = set([])
+    new_coords = set([])
 
-    # candidates is the union of currently living cells and all the neighbouring cells
-    # but each one is only considered once using the set() function
-    candidates = board.union(set(n for cell in board for n in neighbors(cell)))
-    for cell in candidates:
+    # candidate_cells is the union of currently living cells and all their neighbouring cells,
+    # each one only considered once using the set() function
+    candidate_cells = coords.union(set(n for cell in coords for n in neighbors(cell)))
+    for cell in candidate_cells:
 
         # If the neighboring cells are alive cells they should be in the board list,
         # so we just count how many times that's true and that's the number of living
         # cells in the neighbourhood of each living cell
-        count = sum((n in board) for n in neighbors(cell))
+        count = sum((n in coords) for n in neighbors(cell))
 
         # The next statement incorporates the whole logic of The Game of Life
-        if count == 3 or (count == 2 and cell in board):
-            new_board.add(cell)
-    return new_board
+        if count == 3 or (count == 2 and cell in coords):
+            new_coords.add(cell)
+
+    # A set of the next generation's living cells' coordinates is returned.
+    return new_coords
 
 def game(seed, iterations):
 
@@ -112,6 +133,7 @@ def main():
     args = parser.parse_args()
     input = args.input
     iterations = args.iter
+
 
     if input != '':
         try:

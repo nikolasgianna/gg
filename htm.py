@@ -20,7 +20,6 @@ def toArray(board):
         sys.exit()
 
     if new_height > MAX_ARRAY or new_width > MAX_ARRAY:
-            # print ("Maximum array size exceeded")
             print ("{} {} {}".format("Maximum array size of", MAX_ARRAY, "exceeded"))
             sys.exit()
 
@@ -31,6 +30,8 @@ def toArray(board):
     board = [[0] * (new_width + 1) for row in range(new_height+1)]
 
     for cell in new_world:
+
+
 
         board[cell[0]][cell[1]] = 1
 
