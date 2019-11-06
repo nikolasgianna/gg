@@ -1,108 +1,79 @@
-print("hello")
-start = [[1,1,1],
-         [0,1,0],
-         [0,1,0]]
+#!/usr/bin/env python3
 
-number_of_iterations = 4
+import sys
 
-def start2(start, number_of_iterations):
+MAX_ARRAY = 100
+MAX_ITERATIONS = 1000
 
-    def toBoard(cells):
+def neighbors(cell):
 
-        board = set([])
+    # This is a function that returns the coordinates of a given cell's neighbour cells
+    x, y = cell
+    block = [(x + i, y + j) for i in range(-1, 2) for j in range(-1, 2)]
+    # We only want the surrounding cells
+    del block[4]
+    return block
 
-        for x,row in enumerate(cells):
-            for y,cell in enumerate(row):
-                if cell:
-                    # print (x,y)
-                     board.add((x,y))
-                    #  print (board)
-        return board
+def toArray(coords):
 
-    # def htmlize(array):
-    #     s = []
-    #     for x,row in enumerate(array):
-    #         for y,cell in enumerate(row):
-    #             s.append('▓▓' if cell else '░░')
-    #         s.append('\n')
-    #     return ''.join(s)
-    #
-    #
-    # print (htmlize(start))
-    # print (toBoard(start))
+    # This is a function that takes as input a set of coordinates of living cells
+    # and returns a 2d array (technically a list for python) of zeros and ones,
+    # where ones represent living cells
+    # The array is cropped around the living cells
 
-    board = toBoard(start)
+    aliveCells = list(coords)
 
-    def neighbors(cell):
-        x, y = cell
-        yield x - 1, y - 1
-        yield x    , y - 1
-        yield x + 1, y - 1
-        yield x - 1, y
-        yield x + 1, y
-        yield x - 1, y + 1
-        yield x    , y + 1
-        yield x + 1, y + 1
+    try:
+        # We will need these measures to crop around the living cells
+        # This is also a way to check for lack of living cells
+        max_x = max( x for (x,y) in aliveCells)
+        min_x = min( x for (x,y) in aliveCells)
+        max_y = max( y for (x,y) in aliveCells)
+        min_y = min( y for (x,y) in aliveCells)
+    except ValueError:
+        print ("No living cells left!!!")
+        sys.exit()
 
-    def apply_iteration(board):
-        new_board = set([])
-        candidates = board.union(set(n for cell in board for n in neighbors(cell)))
-        for cell in candidates:
-            count = sum((n in board) for n in neighbors(cell))
-            if count == 3 or (count == 2 and cell in board):
-                new_board.add(cell)
-        return new_board
+    # This is effectively the cropping mechanism. We only care about the living cells
+    new_height = max_x - min_x
+    new_width = max_y - min_y
 
-    # if __name__ == "__main__":
-    def run(board):
-        # number_of_iterations = 1
-        for _ in range(number_of_iterations):
-            board = apply_iteration(board)
-        # print(board)
-        return board
+    # This is a way to control how big the Game can get
+    if new_height > MAX_ARRAY or new_width > MAX_ARRAY:
+            print ("{} {} {}".format("Maximum array size of", MAX_ARRAY, "exceeded"))
+            sys.exit()
 
-    der = list(run(board))
-    # print (der)
+    #The input coordninates might not start from zero.
+    new_coords = [(z-min_x, y-min_y) for (z,y) in aliveCells]
 
-    new_height = max( x for (x,y) in der) - min( x for (x,y) in der)
-    new_width =  max( y for (x,y) in der) - min( y for (x,y) in der)
+    # A new array of the above dimensions is created and filled with zeros
+    out_array = [[0] * (new_width + 1) for row in range(new_height+1)]
 
-    offset_x = 0 - min( x for (x,y) in der)
-    offset_y = 0 - min( y for (x,y) in der)
-    # print (new_height, new_width)
+    # Every spot that contains a living cell is filled with a '1'
+    for cell in new_coords:
+        out_array[cell[0]][cell[1]] = 1
 
-    def toArray(der, height, width, offset_x, offset_y):
+    return out_array
 
-        new_der = [(z+offset_x, y+offset_y) for (z,y) in der]
+def arrayToTiles(array):
 
-        board = [[0] * width for row in range(height)]
+    # This function turns an array of 1's and 0's into an array of tiles
+    # The tiles are extended ASCII characters (ASCII codes \xB0 and \xB2, low and high density dotted)
 
-        for cell in new_der:
-            board[cell[0]][cell[1]] = 1
-
-        return board
-
-
-    out = toArray(der, new_height+1, new_width+1, offset_x,offset_y)
-    # print (out)
-    new_der = [(z+offset_x, y+offset_y) for (z,y) in der]
-
-    # print (der)
-    # print (new_der)
-    return out
-    # print (htmlize(out))
-    # print(out)
-def htmlize(array):
     s = []
     for x,row in enumerate(array):
         for y,cell in enumerate(row):
             s.append('▓▓' if cell else '░░')
-            # s.append('🀫' if cell else '🂱')
-
         s.append('\n')
     return ''.join(s)
 
+def positive_int(x):
 
-print (htmlize(start))
+    # This is to limit the number of iterations and in doing so, the time the Game will run
+    x = int(x)
+    if x < 1:
+        raise argparse.ArgumentTypeError("Minimum number of iterations is 1")
+    if x > MAX_ITERATIONS:
+        raise argparse.ArgumentTypeError("{} {}".format("Maximum number of iterations is", MAX_ITERATIONS))
 
-print (htmlize(start2(start, number_of_iterations)))
+    return x

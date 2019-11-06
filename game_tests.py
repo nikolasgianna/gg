@@ -1,15 +1,15 @@
+#!/usr/bin/env python3
+
 import unittest
 from fini import game
 
 class TestSum(unittest.TestCase):
 
-    def test_glider(self):
+    def test_empty(self):
 
-        out = ('▓▓░░▓▓\n'
-               '░░▓▓▓▓\n'
-               '░░▓▓░░\n')
+        out = 'No living cells in initial seed\n'
 
-        f = open('./glider.txt')
+        f = open('./input_templates/empty.txt')
         seed = f.read()
         f.close()
 
@@ -18,11 +18,13 @@ class TestSum(unittest.TestCase):
         result = game(seed,number_of_iterations )
         self.assertEqual(result, out, "Not the expected result")
 
-    def test_empty(self):
+    def test_glider(self):
 
-        out = 'No living cells in initial seed\n'
+        out = ('▓▓░░▓▓\n'
+               '░░▓▓▓▓\n'
+               '░░▓▓░░\n')
 
-        f = open('./empty.txt')
+        f = open('./input_templates/glider.txt')
         seed = f.read()
         f.close()
 
@@ -40,11 +42,26 @@ class TestSum(unittest.TestCase):
                '░░▓▓░░░░▓▓░░\n'
                '░░░░▓▓▓▓░░░░\n')
 
-        f = open('./block.txt')
+        f = open('./input_templates/block.txt')
         seed = f.read()
         f.close()
 
         number_of_iterations = 1
+
+        result = game(seed,number_of_iterations )
+        self.assertEqual(result, out, "Not the expected result")
+
+    def test_penta_dec_multi(self):
+
+        out = ('▓▓░░░░▓▓░░▓▓▓▓░░▓▓░░░░▓▓\n'
+               '▓▓▓▓▓▓▓▓░░▓▓▓▓░░▓▓▓▓▓▓▓▓\n'
+               '▓▓░░░░▓▓░░▓▓▓▓░░▓▓░░░░▓▓\n')
+
+        f = open('./input_templates/penta_decathlon.txt')
+        seed = f.read()
+        f.close()
+
+        number_of_iterations = 1000
 
         result = game(seed,number_of_iterations )
         self.assertEqual(result, out, "Not the expected result")
